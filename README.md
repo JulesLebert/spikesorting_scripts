@@ -12,6 +12,6 @@ Install all the dependencies by using cd to this directory and then use
 
 Edit the paramaters of the spikesorting in concatenated_recordings_params.json
 
-Navigate in spikesorting_scipts/ and run
+Navigate in scripts/ and run
 
 `python spikesorting_concatenated_NP.py concatenated_recordings_params.json'
