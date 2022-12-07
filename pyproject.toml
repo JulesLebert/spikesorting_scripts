@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "spikesorting_scripts"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 spikeinterface = "^0.96.1"
 jsmin = "^3.0.1"
 pandas = "^1.5.2"

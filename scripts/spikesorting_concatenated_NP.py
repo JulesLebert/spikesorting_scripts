@@ -118,9 +118,9 @@ def main():
         recording = spikeglx_preprocessing(recording)
         recordings_list.append(recording)
 
-    multirecording = sc.concatenate_recordings(recordings_list)
+    multirecordings = sc.concatenate_recordings(recordings_list)
     multirecordings = multirecordings.set_probe(recordings_list[0].get_probe())
-    sorting = ss.run_sorters(params['sorter_list'], [multirecording], working_folder=working_directory,
+    sorting = ss.run_sorters(params['sorter_list'], [multirecordings], working_folder=working_directory,
         mode_if_folder_exists='overwrite', 
         engine='loop', verbose=True)
 
@@ -128,6 +128,7 @@ def main():
     # # In this example, only 2 mappings are in the data, but it can be extended to more mappings
     # # To extract channel coordinates from a probe object, use probe.get_channel_locations()
     # # And then group recordings based on this
+    # # More information about probe object on https://probeinterface.readthedocs.io/en/main/
     
     # recordings_list_probemap_12 = []
     # recordings_list_probemap_34 = []
