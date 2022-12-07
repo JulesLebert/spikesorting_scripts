@@ -126,6 +126,7 @@ def main():
 
     # # If recordings don't have same mapping, can do something like this:
     # # In this example, only 2 mappings are in the data, but it can be extended to more mappings
+    # # To extract channel coordinates from a recording object, use recording.get_channel_locations()
     # # To extract channel coordinates from a probe object, use probe.get_channel_locations()
     # # And then group recordings based on this
     # # More information about probe object on https://probeinterface.readthedocs.io/en/main/
