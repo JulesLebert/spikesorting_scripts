@@ -155,3 +155,6 @@ def main():
     # Not sure if it works with concatenated recordings
     # And might take a while to run extract waveforms
     spikesorting_postprocessing(params)
+
+if __name__ == '__main__':
+    main()
