@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "spikesorting-scripts"
+version = "0.1.0"
+description = ""
+authors = ["Jules Lebert <55235543+JulesLebert@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "spikesorting_scripts"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+spikeinterface = "^0.96.1"
+jsmin = "^3.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
