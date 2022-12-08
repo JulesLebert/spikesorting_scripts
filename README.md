@@ -14,4 +14,4 @@ Edit the paramaters of the spikesorting in concatenated_recordings_params.json
 
 Navigate in scripts/ and run
 
-`python spikesorting_concatenated_NP.py concatenated_recordings_params.json'
+`python spikesorting_concatenated_NP.py concatenated_recordings_params.json`
