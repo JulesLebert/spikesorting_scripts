@@ -341,6 +341,17 @@ test = ["datalad (==0.16.2)", "hdbscan", "herdingspikes (<=0.3.99)", "numba", "n
 widgets = ["ipympl", "ipywidgets", "sortingview (>=0.11.0,<0.12)"]
 
 [[package]]
+name = "tdt"
+version = "0.5.4"
+description = "Tucker-Davis Technologies (TDT) Python APIs for reading data and interacting with Synapse software"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "threadpoolctl"
 version = "3.1.0"
 description = "threadpoolctl"
@@ -383,8 +394,8 @@ python-versions = ">=3.7"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "ca479437987d7108ed5d0d7c780a0135e9510ce576ba0e1bb0fdff2dff1a5460"
+python-versions = "^3.8"
+content-hash = "786d84127da5faaf8b156eb9afd23641ae8a559d22e5a4c82ed9c2e25f5f9ec9"
 
 [metadata.files]
 colorama = [
@@ -803,6 +814,10 @@ six = [
 spikeinterface = [
     {file = "spikeinterface-0.96.1-py3-none-any.whl", hash = "sha256:0578715ba679998502f74a44f6c2fc4b725681601866eebbf8bdf1bbc3ac1655"},
     {file = "spikeinterface-0.96.1.tar.gz", hash = "sha256:10999cd49313ae686c4a061d6ec0350bc1dd110be71f60e3870eaddd85c5bd2a"},
+]
+tdt = [
+    {file = "tdt-0.5.4-py3-none-any.whl", hash = "sha256:186fca1fb1eb506d336f991cd137eb99721078ab855558fe32f634fb2643a0e0"},
+    {file = "tdt-0.5.4.tar.gz", hash = "sha256:d7d60295703afaf5ad4b3bc4eab14858b5399b826096a2d86b91438a04af6283"},
 ]
 threadpoolctl = [
     {file = "threadpoolctl-3.1.0-py3-none-any.whl", hash = "sha256:8b99adda265feb6773280df41eece7b2e6561b772d21ffd52e372f999024907b"},
