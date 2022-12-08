@@ -21,6 +21,8 @@ import spikeinterface.curation as scu
 import spikeinterface.qualitymetrics as sqm
 import spikeinterface.exporters as sexp
 
+from spikesorting_scripts.npyx_metadata_fct import get_npix_sync
+
 def spikeglx_preprocessing(recording):
     # Preprocessing steps
     logger.info(f'preprocessing recording')
@@ -114,6 +116,9 @@ def main():
     recordings_list = []
     # /!\ This assumes that all the recordings must have same mapping
     for session in sessions:
+        # Extract sync onsets and save as catgt would
+        get_npix_sync(datadir / session, sync_trial_chan=[5])
+
         recording = se.read_spikeglx(datadir / session, stream_id='imec0.ap')
         recording = spikeglx_preprocessing(recording)
         recordings_list.append(recording)
@@ -135,6 +140,9 @@ def main():
     # recordings_list_probemap_34 = []
 
     # for session in sessions:
+    #     # Extract sync onsets and save as catgt would
+    #     get_npix_sync(datadir / session, sync_trial_chan=[5])
+    
     #     recording = se.read_spikeglx(catgt_data / session, stream_id='imec0.ap')
     #     recording = spikeglx_preprocessing(recording)
 
