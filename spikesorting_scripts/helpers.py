@@ -26,7 +26,7 @@ def get_channelmap_names(dp):
         if len(metafile)==0:
             raise(f'No metafile found in {imec_folder.name}')
         elif len(metafile)>1:
-            print('More that 1 metafile found in {imec_folder.name}. Using {metafile[0]}')
+            print(f'More that 1 metafile found in {imec_folder.name}. Using {metafile[0]}')
 
         meta = load_meta_file(imec_folder / metafile[0])
         channel_map_name = Path(meta['imRoFile'])
