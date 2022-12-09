@@ -17,6 +17,7 @@ matplotlib = "^3.6.2"
 networkx = "^2.8.8"
 tdt = "^0.5.4"
 joblib = "~1.1.1"
+neo = {git = "https://github.com/JulesLebert/python-neo.git"}
 
 
 [build-system]

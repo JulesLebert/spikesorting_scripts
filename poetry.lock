@@ -100,11 +100,12 @@ setuptools_scm = ">=7"
 
 [[package]]
 name = "neo"
-version = "0.11.1"
+version = "0.12.0.dev0"
 description = "Neo is a package for representing electrophysiology data in Python, together with support for reading a wide range of neurophysiology file formats"
 category = "main"
 optional = false
 python-versions = ">=3.7"
+develop = false
 
 [package.dependencies]
 numpy = ">=1.18.5"
@@ -124,6 +125,12 @@ nixio = ["nixio (>=1.5.0)"]
 nwb = ["pynwb"]
 stimfitio = ["stfio"]
 tiffio = ["pillow"]
+
+[package.source]
+type = "git"
+url = "https://github.com/JulesLebert/python-neo.git"
+reference = "HEAD"
+resolved_reference = "78ac7a1a8bc0722609db1ca537965a28de76bb90"
 
 [[package]]
 name = "networkx"
@@ -395,7 +402,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "786d84127da5faaf8b156eb9afd23641ae8a559d22e5a4c82ed9c2e25f5f9ec9"
+content-hash = "ab3c21507dc9333e36a5075d21930eb10476e5a25976340921ab974e6735447d"
 
 [metadata.files]
 colorama = [
@@ -601,9 +608,7 @@ matplotlib = [
     {file = "matplotlib-3.6.2-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:4426c74761790bff46e3d906c14c7aab727543293eed5a924300a952e1a3a3c1"},
     {file = "matplotlib-3.6.2.tar.gz", hash = "sha256:b03fd10a1709d0101c054883b550f7c4c5e974f751e2680318759af005964990"},
 ]
-neo = [
-    {file = "neo-0.11.1.tar.gz", hash = "sha256:f4a206044b332ad00b10072b0dc7a70b359fa365ec786f92ab757ef4ae588474"},
-]
+neo = []
 networkx = [
     {file = "networkx-2.8.8-py3-none-any.whl", hash = "sha256:e435dfa75b1d7195c7b8378c3859f0445cd88c6b0375c181ed66823a9ceb7524"},
     {file = "networkx-2.8.8.tar.gz", hash = "sha256:230d388117af870fce5647a3c52401fcf753e94720e6ea6b4197a5355648885e"},
