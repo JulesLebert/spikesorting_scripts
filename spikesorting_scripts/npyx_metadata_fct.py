@@ -6,6 +6,24 @@ import os
 import numpy as np
 from ast import literal_eval as ale
 
+def load_meta_file(metafile):
+    ''' Read a .meta file from spikeglx and return a dictionnary of its content'''
+    # load metafile
+    meta={}
+    with open(metafile, 'r') as f:
+        for ln in f.readlines():
+            tmp = ln.split('=')
+            k, val = tmp[0], ''.join(tmp[1:])
+            k = k.strip()
+            val = val.strip('\r\n')
+            if '~' in k:
+                meta[k] = val.strip('(').strip(')').split(')(')
+            else:
+                try:  # is it numeric?
+                    meta[k] = float(val)
+                except:
+                    meta[k] = val
+    return meta
 
 def get_npix_sync(dp, output_binary=False, unit='seconds', sync_trial_chan=[5], verbose=True):
     '''Added by Jules
@@ -38,22 +56,7 @@ def get_npix_sync(dp, output_binary=False, unit='seconds', sync_trial_chan=[5], 
         if verbose: print('More that 1 metafile found in {}. Using {}'.format(nidqpath,metafile[0]))
     metafile = nidqpath / metafile[0]
 
-    # load metafile
-    meta={}
-    with open(metafile, 'r') as f:
-        for ln in f.readlines():
-            tmp = ln.split('=')
-            k, val = tmp[0], ''.join(tmp[1:])
-            k = k.strip()
-            val = val.strip('\r\n')
-            if '~' in k:
-                meta[k] = val.strip('(').strip(')').split(')(')
-            else:
-                try:  # is it numeric?
-                    meta[k] = float(val)
-                except:
-                    meta[k] = val
-
+    meta = load_meta_file(metafile)
 
     srate = meta['niSampRate'] if unit=='seconds' else 1
 
