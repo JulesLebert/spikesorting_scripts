@@ -8,7 +8,6 @@ packages = [{include = "spikesorting_scripts"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-spikeinterface = "^0.96.1"
 jsmin = "^3.0.1"
 pandas = "^1.5.2"
 scipy = "^1.9.3"
@@ -17,6 +16,7 @@ matplotlib = "^3.6.2"
 networkx = "^2.8.8"
 tdt = "^0.5.4"
 joblib = "~1.1.1"
+spikeinterface = {git = "https://github.com/SpikeInterface/spikeinterface.git"}
 neo = {git = "https://github.com/JulesLebert/python-neo.git"}
 
 

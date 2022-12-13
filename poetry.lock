@@ -130,7 +130,7 @@ tiffio = ["pillow"]
 type = "git"
 url = "https://github.com/JulesLebert/python-neo.git"
 reference = "HEAD"
-resolved_reference = "78ac7a1a8bc0722609db1ca537965a28de76bb90"
+resolved_reference = "419868e342ecc9763bcf359e14c0018e38365d94"
 
 [[package]]
 name = "networkx"
@@ -200,7 +200,7 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 
 [[package]]
 name = "probeinterface"
-version = "0.2.14"
+version = "0.2.15"
 description = "Python package to handle probe layout, geometry and wiring to device."
 category = "main"
 optional = false
@@ -328,24 +328,32 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "spikeinterface"
-version = "0.96.1"
+version = "0.96.2.dev0"
 description = "Python toolkit for analysis, visualization, and comparison of spike sorting output"
 category = "main"
 optional = false
 python-versions = "<4.0,>=3.8"
+develop = false
 
 [package.dependencies]
 joblib = "!=1.2"
 neo = ">=0.11.1"
 numpy = "*"
 probeinterface = ">=0.2.14"
+threadpoolctl = "*"
 tqdm = "*"
 
 [package.extras]
 extractors = ["MEArec (>=1.7.1)", "lxml", "pyedflib (>=0.1.30)", "pynwb (>=2.1.0)", "sonpy"]
-full = ["distinctipy", "h5py", "matplotlib", "networkx", "pandas", "scikit-learn", "scipy", "zarr"]
-test = ["datalad (==0.16.2)", "hdbscan", "herdingspikes (<=0.3.99)", "numba", "numpy (<1.24)", "pymde", "pynndescent", "pytest", "pytest-cov", "sortingview", "spyking-circus", "torch", "tridesclous (>=1.6.6.1)", "zarr"]
+full = ["distinctipy", "h5py", "matplotlib", "networkx", "pandas", "scikit-learn", "scipy", "xarray", "zarr"]
+test = ["datalad (==0.16.2)", "hdbscan", "herdingspikes (<=0.3.99)", "neo @ git+https://github.com/NeuralEnsemble/python-neo.git", "numba", "numpy (<1.24)", "probeinterface @ git+https://github.com/SpikeInterface/probeinterface.git", "pymde", "pynndescent", "pytest", "pytest-cov", "sortingview", "spyking-circus", "torch", "tridesclous (>=1.6.6.1)", "xarray", "zarr"]
 widgets = ["ipympl", "ipywidgets", "sortingview (>=0.11.0,<0.12)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/SpikeInterface/spikeinterface.git"
+reference = "HEAD"
+resolved_reference = "dd04404ebf32c606db830ab8c097a986348409ac"
 
 [[package]]
 name = "tdt"
@@ -402,7 +410,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ab3c21507dc9333e36a5075d21930eb10476e5a25976340921ab974e6735447d"
+content-hash = "79e2fc799abcfaff7465b986a88344f30ff1c13528cfa0d79a433ff097622181"
 
 [metadata.files]
 colorama = [
@@ -740,8 +748,8 @@ pillow = [
     {file = "Pillow-9.3.0.tar.gz", hash = "sha256:c935a22a557a560108d780f9a0fc426dd7459940dc54faa49d83249c8d3e760f"},
 ]
 probeinterface = [
-    {file = "probeinterface-0.2.14-py3-none-any.whl", hash = "sha256:db6e4e687d755ce12b5eb7b2eff2b1ef08e0e028dc53fcec88ce8a6687b52fd0"},
-    {file = "probeinterface-0.2.14.tar.gz", hash = "sha256:de264ba023053e9a5c848ec9adad74ec3c71fb151b9396c4b9775518570fbdac"},
+    {file = "probeinterface-0.2.15-py3-none-any.whl", hash = "sha256:7e14b6d0c6ed366e483c8964ead20d1eae904c8cfb93ab638aeef9b25c8a4e37"},
+    {file = "probeinterface-0.2.15.tar.gz", hash = "sha256:00a4f3465674f404214af65c85ff509d7aaf66c3d3f1c6e87c33086d9558c97b"},
 ]
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
@@ -816,10 +824,7 @@ six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
 ]
-spikeinterface = [
-    {file = "spikeinterface-0.96.1-py3-none-any.whl", hash = "sha256:0578715ba679998502f74a44f6c2fc4b725681601866eebbf8bdf1bbc3ac1655"},
-    {file = "spikeinterface-0.96.1.tar.gz", hash = "sha256:10999cd49313ae686c4a061d6ec0350bc1dd110be71f60e3870eaddd85c5bd2a"},
-]
+spikeinterface = []
 tdt = [
     {file = "tdt-0.5.4-py3-none-any.whl", hash = "sha256:186fca1fb1eb506d336f991cd137eb99721078ab855558fe32f634fb2643a0e0"},
     {file = "tdt-0.5.4.tar.gz", hash = "sha256:d7d60295703afaf5ad4b3bc4eab14858b5399b826096a2d86b91438a04af6283"},
