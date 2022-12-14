@@ -1,0 +1,29 @@
+{
+    "logpath": "/home/skgtjml/Scratch/logs",
+
+    "datadir": "/home/skgtjml/Scratch/WARP_data",
+
+    "rec_name": "20_09_22-7_10_22",
+
+    "streams": ["b'BB_4'", "b'BB_5'"],
+
+    "sorter_list": ["mountainsort4"],
+
+    "working_directory": "/home/skgtjml/Scratch/working_directory/multirec",
+
+    "output_folder": "/home/skgtjml/Scratch/output_multirecordings/F1903_Trifle",
+    
+    "sorter_paths":
+    {
+        "kilosort2_path": "/home/skgtjml/code/spikesorting_tools/Kilosort-2.0",
+        "waveclus_path": "/home/skgtjml/code/spikesorting_tools/wave_clus"
+    },
+
+    "job_kwargs":
+    {
+        "n_jobs": 10,
+        "chunk_size": 30000
+    }
+
+
+}
