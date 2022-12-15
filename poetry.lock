@@ -346,14 +346,14 @@ tqdm = "*"
 [package.extras]
 extractors = ["MEArec (>=1.7.1)", "lxml", "pyedflib (>=0.1.30)", "pynwb (>=2.1.0)", "sonpy"]
 full = ["distinctipy", "h5py", "matplotlib", "networkx", "pandas", "scikit-learn", "scipy", "xarray", "zarr"]
-test = ["datalad (==0.16.2)", "hdbscan", "herdingspikes (<=0.3.99)", "neo @ git+https://github.com/NeuralEnsemble/python-neo.git", "numba", "numpy (<1.24)", "probeinterface @ git+https://github.com/SpikeInterface/probeinterface.git", "pymde", "pynndescent", "pytest", "pytest-cov", "sortingview", "spyking-circus", "torch", "tridesclous (>=1.6.6.1)", "xarray", "zarr"]
+test = ["datalad (==0.16.2)", "hdbscan", "herdingspikes (<=0.3.99)", "neo @ git+https://github.com/NeuralEnsemble/python-neo.git", "numba", "numpy (<1.24)", "probeinterface @ git+https://github.com/SpikeInterface/probeinterface.git", "pymde", "pynndescent", "pytest", "pytest-cov", "sortingview", "torch", "tridesclous (>=1.6.6.1)", "xarray", "zarr"]
 widgets = ["ipympl", "ipywidgets", "sortingview (>=0.11.0,<0.12)"]
 
 [package.source]
 type = "git"
-url = "https://github.com/SpikeInterface/spikeinterface.git"
+url = "https://github.com/JulesLebert/spikeinterface.git"
 reference = "HEAD"
-resolved_reference = "dd04404ebf32c606db830ab8c097a986348409ac"
+resolved_reference = "7a208fcd836d030108d27e9c96436abbe525293f"
 
 [[package]]
 name = "tdt"
@@ -410,7 +410,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "79e2fc799abcfaff7465b986a88344f30ff1c13528cfa0d79a433ff097622181"
+content-hash = "e0a872c9c1e888a829baccfb4139a1b7dfcc35f1f9ebed43c3ead8cf586374f9"
 
 [metadata.files]
 colorama = [
