@@ -12,7 +12,7 @@ All the spike sorters have to be installed separately (see https://spikeinterfac
 
 # Running spikesorting on concatenated recordings
 
-Edit the paramaters of the spikesorting in concatenated_recordings_params.json
+Edit the parameters of the spikesorting in concatenated_recordings_params.json
 
 Navigate in scripts/ and run
 
