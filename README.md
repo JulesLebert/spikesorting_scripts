@@ -18,4 +18,4 @@ Navigate in scripts/ and run
 
 `python spikesorting_concatenated_NP.py json_files/concatenated_recordings_params.json`
 
-The jobs folder contains job file to run on the UCL cluster myriad (https://www.rc.ucl.ac.uk/docs/Clusters/Myriad/)
+The jobs folder contains job files to run on the UCL cluster myriad (https://www.rc.ucl.ac.uk/docs/Clusters/Myriad/)
