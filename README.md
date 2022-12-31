@@ -8,7 +8,7 @@ Install all the dependencies by using cd to this directory and then use
 
 `pip install -e .`
 
-All the spike sorters have to be installed separately
+All the spike sorters have to be installed separately (see https://spikeinterface.readthedocs.io/en/0.13.0/sortersinfo.html)
 
 # Running spikesorting on concatenated recordings
 
