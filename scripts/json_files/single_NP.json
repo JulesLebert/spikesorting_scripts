@@ -1,0 +1,30 @@
+{
+    "logpath": "/home/skgtjml/Scratch/logs",
+
+    "datadir": "/home/skgtjml/Scratch/tmpData/NeuropixelData/F2103_Fettucini",
+
+    "sorter_list": ["pykilosort"],
+
+    "working_directory": "/home/skgtjml/Scratch/working_directory/np_working_dir",
+
+    "output_folder": "/home/skgtjml/Scratch/si_neuropixel_spikesorting",
+    
+    "sorter_paths":
+    {
+        "kilosort2_path": "/home/skgtjml/code/spikesorting_tools/Kilosort-2.0",
+        "kilosort3_path": "/home/skgtjml/code/spikesorting_tools/Kilosort",
+        "waveclus_path": "/home/skgtjml/code/spikesorting_tools/wave_clus"
+    },
+
+    "remove_dup_spikes": true,
+    "remove_dup_spikes_params": 
+    {
+        "censored_period_ms": 0.2
+    },
+
+    "jobs_kwargs":
+    {
+        "n_jobs": 6,
+        "chunk_size": 30000
+    }
+}
