@@ -64,4 +64,15 @@ And install dependencies
     pip install -e .
 ```
 
+**/!\ As of today (23/01/2023 version ibl_1.4.1) there is a type in pykilosort that will produce an error when exporting data to phy**
+
+Before installing phy, you should modify the following line:
+`pykilosort/postprocess.py` line 1480:
+
+```python
+    _save('channel_labels', probe.channel_labels, np.int8)
+    # Change this to be:
+    _save('channel_labels', probe.channels_labels, np.int8)
+```
+
 Example of job running pykilosort in `jobs/run_single_NP_pykilosort.sh`
