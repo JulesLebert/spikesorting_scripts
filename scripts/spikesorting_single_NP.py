@@ -38,10 +38,12 @@ def spikesorting_pipeline(rec_name, params):
     sorting_output = ss.run_sorters(params['sorter_list'], [recording], working_folder=working_directory,
         mode_if_folder_exists='overwrite', 
         verbose=True, 
-        engine='joblib', 
-        engine_kwargs={'n_jobs': params['jobs_kwargs']['n_jobs']})
+        engine='loop', 
+        sorter_params=params['sorter_params']
+        # engine_kwargs={'n_jobs': params['jobs_kwargs']['n_jobs']}
+        )
 
-def spikesorting_postprocessing(params):
+def spikesorting_postprocessing(rec, params):
     jobs_kwargs = params['jobs_kwargs']
     sorting_output = ss.collect_sorting_outputs(Path(params['working_directory']) / 'tempDir')
     for (rec_name, sorter_name), sorting in sorting_output.items():
@@ -51,7 +53,7 @@ def spikesorting_postprocessing(params):
             scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes']['censored_period_ms'])
 
         logger.info('waveform extraction')
-        outDir = params['output_folder'] / rec_name / sorter_name
+        outDir = params['output_folder'] / rec.name / sorter_name
         we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
                 load_if_exists=True,
                 overwrite=False,
@@ -112,7 +114,7 @@ def main():
 
         spikesorting_pipeline(rec, params)
 
-    spikesorting_postprocessing(params)
+        spikesorting_postprocessing(rec, params)
 
 if __name__ == '__main__':
     main()

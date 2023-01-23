@@ -1,10 +1,10 @@
 #!/bin/bash -l
 
 # Request 1 hour of wallclock time (format hours:minutes:seconds).
-#$ -l h_rt=24:00:00
+#$ -l h_rt=48:00:00
 
 # Request 256 gigabyte of RAM (must be an integer followed by M, G, or T)
-#$ -l mem=32G
+#$ -l mem=8G
 
 # Request 10 gigabyte of TMPDIR space (default is 10 GB)
 #$ -l tmpfs=10G
@@ -13,7 +13,7 @@
 #$ -l gpu=1
 
 # Request 6 cores.
-#$ -pe smp 6
+#$ -pe smp 10
 
 # Set the name of the job.
 #$ -N batch_spikesort_Fettucini
