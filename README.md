@@ -31,7 +31,7 @@ The jobs folder contains job files to run on the UCL cluster myriad (https://www
 
 I highly recommand to use conda for pykilosort on myriad as cupy can be complicated to install without
 
-If a python module is unload, unload it by using
+If a python module is loaded, unload it by using
 
 ```bash   
 module unload python
