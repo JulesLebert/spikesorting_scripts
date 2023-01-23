@@ -58,17 +58,17 @@ def spikesorting_postprocessing(params):
                 ms_before=1, ms_after=2., max_spikes_per_unit=100,
                 **jobs_kwargs)
 
-        logger.info(f'Computing quality netrics')
+        logger.info(f'Computing quality metrics')
         metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
 
         logger.info(f'Exporting to phy')
         sexp.export_to_phy(we, outDir / 'phy_folder', verbose=True, **jobs_kwargs)
 
-        logger.info('Export report')
-        sexp.export_report(we, outDir / 'report',
-                format='png',
-                force_computation=True,
-                **jobs_kwargs)
+        # logger.info('Export report')
+        # sexp.export_report(we, outDir / 'report',
+        #         format='png',
+        #         force_computation=True,
+        #         **jobs_kwargs)
 
     
 
@@ -105,8 +105,8 @@ def main():
 
     logger.info('Start loading recordings')
 
-    # recordings_list = [rec for rec in datadir.glob('*_g0')]
-    recordings_list = [datadir / '14112022_F2103_Fettucini_PM_g0']
+    recordings_list = [rec for rec in datadir.glob('*_g0')]
+    # recordings_list = [datadir / '14112022_F2103_Fettucini_PM_g0']
     for rec in recordings_list:
         logger.info(f'Loading recording {rec.name}')
 
