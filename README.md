@@ -47,8 +47,8 @@ source $UCL_CONDA_PATH/etc/profile.d/conda.sh
 Create a new conda environment
 
 ```bash
-conda create --name ss_pykilosort python=3.9
-conda activate ss_pykilosort
+conda create --name ibl_pykil_ss python=3.9
+conda activate ibl_pykil_ss
 ```
 
 And install dependencies
