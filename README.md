@@ -68,7 +68,7 @@ And finally install the spikesorting_scripts package following the instructions 
 
 **/!\ As of today (23/01/2023 version ibl_1.4.1) there is a typo in pykilosort that will produce an error when exporting data to phy**
 
-Before installing phy, you should modify the following line:
+Before running pykilosort, you should modify the following line:
 `pykilosort/postprocess.py` line 1480:
 
 ```python
