@@ -50,10 +50,10 @@ def spikesorting_postprocessing(rec, params):
         logger.info(f'Postprocessing {rec_name} {sorter_name}')
         if params['remove_dup_spikes']:
             logger.info(f'removing duplicate spikes')
-            scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes']['censored_period_ms'])
+            sorting = scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes_params']['censored_period_ms'])
 
         logger.info('waveform extraction')
-        outDir = params['output_folder'] / rec.name / sorter_name
+        outDir = Path(params['output_folder']) / rec.name / sorter_name
         we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
                 load_if_exists=True,
                 overwrite=False,
@@ -64,13 +64,20 @@ def spikesorting_postprocessing(rec, params):
         metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
 
         logger.info(f'Exporting to phy')
-        sexp.export_to_phy(we, outDir / 'phy_folder', verbose=True, **jobs_kwargs)
+        sexp.export_to_phy(we, outDir / 'phy_folder',
+            verbose=True, 
+            compute_pc_features=False,
+            **jobs_kwargs)
 
-        # logger.info('Export report')
-        # sexp.export_report(we, outDir / 'report',
-        #         format='png',
-        #         force_computation=True,
-        #         **jobs_kwargs)
+        try:
+            logger.info('Export report')
+            sexp.export_report(we, outDir / 'report',
+                    format='png',
+                    force_computation=True,
+                    **jobs_kwargs)
+        except Exception as e:
+            logger.warning(f'Export report failed: {e}')
+
 
     
 

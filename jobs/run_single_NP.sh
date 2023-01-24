@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 # Request 1 hour of wallclock time (format hours:minutes:seconds).
-#$ -l h_rt=48:00:00
+#$ -l h_rt=16:00:00
 
 # Request 256 gigabyte of RAM (must be an integer followed by M, G, or T)
 #$ -l mem=8G
