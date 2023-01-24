@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from tqdm import tqdm
+import shutil
 
 from .npyx_metadata_fct import load_meta_file
 
@@ -33,6 +35,8 @@ def get_channelmap_names(dp):
         channel_map_dict[imec_folder.name] = channel_map_name.name
 
     return channel_map_dict
+
+    
 def getchanmapnames_andmove(datadir, ferret):
     subfolder ='/'
     fulldir = datadir / ferret
