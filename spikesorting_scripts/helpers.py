@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from tqdm import tqdm
+import shutil
 
 from .npyx_metadata_fct import load_meta_file
 
@@ -33,3 +35,41 @@ def get_channelmap_names(dp):
         channel_map_dict[imec_folder.name] = channel_map_name.name
 
     return channel_map_dict
+
+    
+def getchanmapnames_andmove(datadir, ferret):
+    subfolder ='/'
+    fulldir = datadir / ferret
+    print([f.name for f in fulldir.glob('*g0')])
+    list_subfolders_with_paths = [f.path for f in os.scandir(fulldir) if f.is_dir()]
+    session_list = list(fulldir.glob('*_g0'))
+    bigdict = {}
+    for session in tqdm(session_list):
+
+        chanmapdict = get_channelmap_names(session)
+        print(chanmapdict)
+        #append chan map dict to big dict
+        bigdict.update(chanmapdict)
+    for keys in bigdict:
+        print(keys)
+        print(bigdict[keys])
+        #find out if filename contains keyword
+        upperdirec = keys.replace('_imec0', '')
+        if 'S3' in bigdict[keys]:
+            print('found s3')
+            dest = Path(str(fulldir)+'/S3')
+        elif 'S4' in bigdict[keys]:
+            print('found S4')
+            dest = Path(str(fulldir)+'/S4')
+        elif 'S2' in bigdict[keys]:
+            print('found S2')
+            dest = Path(str(fulldir)+'/S2')
+        elif 'S1' in bigdict[keys]:
+            print('found S1')
+            dest = Path(str(fulldir)+'/S1')
+        try:
+            shutil.move(str(fulldir / upperdirec), str(dest))
+        except:
+            print('already moved')
+
+    return bigdict

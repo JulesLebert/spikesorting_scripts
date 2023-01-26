@@ -5,9 +5,17 @@
 
     "rec_name": "20_09_22-7_10_22",
 
-    "streams": ["b'BB_4'", "b'BB_5'"],
+    "streams": ["BB_4", "BB_5"],
 
     "sorter_list": ["mountainsort4"],
+
+    "sorter_params":
+    {
+        "mountainsort4":
+        {
+            "num_workers": 10
+        }
+    },
 
     "working_directory": "/home/skgtjml/Scratch/working_directory/multirec",
 

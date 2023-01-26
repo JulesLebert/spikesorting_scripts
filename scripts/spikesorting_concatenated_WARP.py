@@ -56,11 +56,11 @@ def preprocess_rec(recording):
 
 
 def export_all(working_directory, output_folder, job_kwargs):
-    logger.info(f'saving {outDir} as phy')
 
     sorting_output = ss.collect_sorting_outputs(working_directory)
     for (rec_name, sorter_name), sorting in sorting_output.items():
         outDir = output_folder / rec_name / sorter_name
+        logger.info(f'saving {outDir} as phy')
         we = sc.extract_waveforms(sorting._recording,
                                 sorting, outDir / 'waveforms', 
                                 ms_before=2.5, ms_after=3, 
@@ -72,7 +72,7 @@ def export_all(working_directory, output_folder, job_kwargs):
                             )
         logger.info(f'WaveformExtractor: {we}')
 
-        sexp.export_to_phy(we, outDir / 'phy', remove_if_exists=False, max_channels_per_template=3,
+        sexp.export_to_phy(we, outDir / 'phy', remove_if_exists=True,
                 copy_binary=True,
                 **job_kwargs
                 )
@@ -85,11 +85,11 @@ def export_all(working_directory, output_folder, job_kwargs):
         logger.info(f'saving report')
 
 def main():
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("params_file", help="path to the json file containing the parameters")
-    # args = parser.parse_args()
-    params_file = '/home/skgtjml/code/spikesorting_scripts/scripts/json_files/spikesorting_params_concatenated_WARP.json'
-    with open(params_file) as json_file:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("params_file", help="path to the json file containing the parameters")
+    args = parser.parse_args()
+    # params_file = '/home/skgtjml/code/spikesorting_scripts/scripts/json_files/spikesorting_params_concatenated_WARP.json'
+    with open(args.params_file) as json_file:
         minified = jsmin(json_file.read()) # Parses out comments.
         params = json.loads(minified)
 
@@ -140,8 +140,9 @@ def main():
                 rec = se.read_tdt(tdx_file, stream_name=stream)
                 rec = preprocess_rec(rec)
                 recording_list[stream].append(rec)
-            except:
+            except Exception as e:
                 logger.info(f'Could not load block {block}')
+                logger.debug(f'Error: {e}')
  
     logger.info('Concatenating recordings')
     recordings = {stream: concatenate_recordings(recording_list[stream]) for stream in streams}
@@ -149,12 +150,16 @@ def main():
     logger.info('Sorting')
     for stream in streams:
         logger.info(f'Starting sorting for stream {stream}')
-        sorting = ss.run_sorters(sorter_list, [recordings[stream]], working_folder=working_directory / stream, engine='loop', verbose=True)
+        sorting = ss.run_sorters(sorter_list, [recordings[stream]], working_folder=working_directory / stream,
+                engine='loop', verbose=True,
+                mode_if_folder_exists='keep',
+                sorter_params=params['sorter_params']
+                )
         logger.info(f'Finished sorting for stream {stream}')
 
         export_all(working_directory=working_directory / stream, 
                 output_folder=output_folder / stream,
-                jobs_kwarg=params['jobs_kwargs']
+                job_kwargs=params['job_kwargs']
                 )
 
 if __name__ == '__main__':
