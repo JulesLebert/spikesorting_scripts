@@ -21,6 +21,8 @@ import spikeinterface.curation as scu
 import spikeinterface.qualitymetrics as sqm
 import spikeinterface.exporters as sexp
 
+from spikesorting_scripts.postprocessing import postprocessing_si
+
 def spikeglx_preprocessing(recording):
     recording = spre.phase_shift(recording)
     recording = spre.bandpass_filter(recording, freq_min=300, freq_max=6000)
@@ -68,6 +70,8 @@ def spikesorting_postprocessing(rec, params):
             verbose=True, 
             compute_pc_features=False,
             **jobs_kwargs)
+        
+        postprocessing_si(outDir / 'phy_folder')
 
         try:
             logger.info('Export report')
@@ -118,10 +122,12 @@ def main():
     # recordings_list = [datadir / '14112022_F2103_Fettucini_PM_g0']
     for rec in recordings_list:
         logger.info(f'Loading recording {rec.name}')
+        try:
+            spikesorting_pipeline(rec, params)
 
-        spikesorting_pipeline(rec, params)
-
-        spikesorting_postprocessing(rec, params)
+            spikesorting_postprocessing(rec, params)
+        except Exception as e:
+            logger.error(f'Error processing {rec.name}: {e}')
 
 if __name__ == '__main__':
     main()
