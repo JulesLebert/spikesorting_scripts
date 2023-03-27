@@ -16,7 +16,7 @@
 #$ -pe smp 10
 
 # Set the name of the job.
-#$ -N batch_spikesort_Fettucini
+#$ -N batch_spikesort_Orecchiette
 
 # Set the working directory to somewhere in your scratch space.  
 #  This is a necessary step as compute nodes cannot write to $HOME.

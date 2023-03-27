@@ -15,6 +15,9 @@ def save_padded_amplitudes(phy_folder):
     return
 
 def rename_template_id(phy_folder):
+    # with "template_ind.npy" phy will consider templates as sparse and will sometimes do
+    # weird things with the number of channels displayed
+    # Switch to "template_inds.npy" to avoid this (as the output of ks2 is)
     if (phy_folder / 'template_ind.npy').exists():
         os.rename(phy_folder / 'template_ind.npy', phy_folder / 'template_inds.npy')
     return

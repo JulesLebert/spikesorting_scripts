@@ -22,7 +22,6 @@ import spikeinterface.qualitymetrics as sqm
 import spikeinterface.exporters as sexp
 
 from spikesorting_scripts.postprocessing import postprocessing_si
-
 def spikeglx_preprocessing(recording):
     recording = spre.phase_shift(recording)
     recording = spre.bandpass_filter(recording, freq_min=300, freq_max=6000)
@@ -56,14 +55,12 @@ def spikesorting_postprocessing(rec, params):
 
         logger.info('waveform extraction')
         outDir = Path(params['output_folder']) / rec.name / sorter_name
+
         we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
                 load_if_exists=True,
                 overwrite=False,
                 ms_before=1, ms_after=2., max_spikes_per_unit=100,
                 **jobs_kwargs)
-
-        logger.info(f'Computing quality metrics')
-        metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
 
         logger.info(f'Exporting to phy')
         sexp.export_to_phy(we, outDir / 'phy_folder',
@@ -72,6 +69,17 @@ def spikesorting_postprocessing(rec, params):
             **jobs_kwargs)
         
         postprocessing_si(outDir / 'phy_folder')
+
+        sorting = se.read_kilosort(outDir / 'phy_folder')
+
+        we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
+            load_if_exists=False,
+            overwrite=True,
+            ms_before=1, ms_after=2., max_spikes_per_unit=100,
+            **jobs_kwargs)
+
+        logger.info(f'Computing quality metrics')
+        metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
 
         try:
             logger.info('Export report')

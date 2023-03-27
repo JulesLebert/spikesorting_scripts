@@ -1,7 +1,7 @@
 {
     "logpath": "/home/skgtjml/Scratch/logs",
 
-    "datadir": "/home/skgtjml/Scratch/tmpData/NeuropixelData/F2103_Fettucini",
+    "datadir": "/home/skgtjml/Scratch/tmpData/NeuropixelData/F2003_Orecchiette",
 
     "sorter_list": ["pykilosort"],
 
