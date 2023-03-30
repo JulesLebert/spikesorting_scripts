@@ -22,6 +22,7 @@ import spikeinterface.qualitymetrics as sqm
 import spikeinterface.exporters as sexp
 
 from spikesorting_scripts.postprocessing import postprocessing_si
+
 def spikeglx_preprocessing(recording):
     recording = spre.phase_shift(recording)
     recording = spre.bandpass_filter(recording, freq_min=300, freq_max=6000)
