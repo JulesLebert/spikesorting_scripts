@@ -136,7 +136,7 @@ def main():
             tdx_file = tdx_file[0]
             try:
                 rec = se.read_tdt(tdx_file, stream_name=stream)
-                powers.append(compute_rec_power)
+                powers.append(compute_rec_power(rec))
                 # rec = preprocess_rec(rec)
                 recording_list[stream].append(rec)
             except Exception as e:
