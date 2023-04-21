@@ -3,7 +3,7 @@
 
     "datadir": "/home/skgtjml/Scratch/WARP_data",
 
-    "rec_name": "20_09_22-7_10_22",
+    "rec_name": "2022_01_24-2022_02_17",
 
     "streams": ["BB_4", "BB_5"],
 
@@ -13,6 +13,9 @@
     {
         "mountainsort4":
         {
+            "adjacency_radius": 20,
+            "filter": false,
+            "whiten": false,
             "num_workers": 10
         }
     },

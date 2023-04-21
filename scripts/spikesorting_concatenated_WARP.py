@@ -26,33 +26,30 @@ from spikeinterface import concatenate_recordings
 
 from probeinterface import generate_multi_columns_probe
 
-def generate_warp_16ch_probe():
-    probe = generate_multi_columns_probe(num_columns=8,
-                                        num_contact_per_column=2,
-                                        xpitch=350, ypitch=350,
-                                        contact_shapes='circle')
-    probe.create_auto_shape('rect')
+from spikesorting_scripts.helpers import generate_warp_16ch_probe
 
-    channel_indices = np.array([13, 15,
-                                9, 11,
-                                14, 16,
-                                10, 12,
-                                8, 6,
-                                4, 2,
-                                7, 5,
-                                3, 1])
-
-    probe.set_device_channel_indices(channel_indices - 1)
-
-    return probe
+def compute_rec_power(rec):
+    subset_data = sc.get_random_data_chunks(rec, num_chunks_per_segment=100,
+                                chunk_size=10000,
+                                seed=0,
+                                )
+    power = np.mean(np.abs(subset_data))
+    return power
 
 def preprocess_rec(recording):
     probe = generate_warp_16ch_probe()
     recording = recording.set_probe(probe)
-    recording_f = spre.bandpass_filter(recording, freq_min=300, freq_max=6000)
-    recording_cmr = spre.common_reference(recording_f, reference='global', operator='median')
+    recording_pre = spre.common_reference(recording, reference='global', operator='median')
+    recording_pre = spre.remove_disconnection_event(recording_pre,
+                            compute_medians="random",
+                            chunk_size= int(recording_pre.get_sampling_frequency()*3),
+                            n_median_threshold=3,
+                            n_peaks=0,
+                            )
+    recording_pre = spre.bandpass_filter(recording_pre, freq_min=300, freq_max=6000)
+    recording_pre = spre.whiten(recording_pre, dtype='float32')
 
-    return recording_cmr
+    return recording_pre
 
 
 def export_all(working_directory, output_folder, job_kwargs):
@@ -129,6 +126,7 @@ def main():
     recording_list = {stream: [] for stream in streams}
 
     for stream in streams:
+        powers = []
         logger.info(f'Loading stream {stream}')
         for block in pbar:
             pbar.set_postfix_str(f'loading {block}')
@@ -138,29 +136,55 @@ def main():
             tdx_file = tdx_file[0]
             try:
                 rec = se.read_tdt(tdx_file, stream_name=stream)
-                rec = preprocess_rec(rec)
+                powers.append(compute_rec_power)
+                # rec = preprocess_rec(rec)
                 recording_list[stream].append(rec)
             except Exception as e:
                 logger.info(f'Could not load block {block}')
                 logger.debug(f'Error: {e}')
- 
+                
+        # only keep recordings with power below 2*median and above 0
+        recording_list[stream] = [recording_list[stream][i] for i, power in enumerate(powers) if power < 2*np.median(powers) and power > 0]
+
     logger.info('Concatenating recordings')
-    recordings = {stream: concatenate_recordings(recording_list[stream]) for stream in streams}
+    recordings = {f'{params["rec_name"]}_{stream}': concatenate_recordings(recording_list[stream]) for stream in streams}
 
+    logger.info('Preprocessing recordings')
+    recordings = {f'{params["rec_name"]}_{stream}': preprocess_rec(recordings[stream]) for stream in recordings}
+
+    logger.info(f'{[recordings[stream] for stream in recordings]}')
     logger.info('Sorting')
-    for stream in streams:
-        logger.info(f'Starting sorting for stream {stream}')
-        sorting = ss.run_sorters(sorter_list, [recordings[stream]], working_folder=working_directory / stream,
-                engine='loop', verbose=True,
-                mode_if_folder_exists='keep',
-                sorter_params=params['sorter_params']
-                )
-        logger.info(f'Finished sorting for stream {stream}')
 
-        export_all(working_directory=working_directory / stream, 
-                output_folder=output_folder / stream,
-                job_kwargs=params['job_kwargs']
-                )
+    sortings = ss.run_sorters(sorter_list, recordings, working_folder=working_directory,
+        engine='loop', verbose=True,
+        mode_if_folder_exists='keep',
+        sorter_params=params['sorter_params']
+        )
+
+    logger.info('Finished sorting')
+
+    export_all(working_directory=working_directory, 
+            output_folder=output_folder,
+            job_kwargs=params['job_kwargs']
+            )
+
+    # for stream in streams:
+    #     logger.info(f'Starting sorting for stream {stream}')
+    #     rec = recordings[stream]
+    #     logger.info(rec)
+    #     s = rec.get_num_samples(segment_index=0)
+    #     logger.info(f'segment {0} num_samples {s}')
+    #     sorting = ss.run_sorters(sorter_list, [recordings[stream]], working_folder=working_directory / stream,
+    #             engine='loop', verbose=True,
+    #             mode_if_folder_exists='keep',
+    #             sorter_params=params['sorter_params']
+    #             )
+    #     logger.info(f'Finished sorting for stream {stream}')
+
+    #     export_all(working_directory=working_directory / stream, 
+    #             output_folder=output_folder / stream,
+    #             job_kwargs=params['job_kwargs']
+    #             )
 
 if __name__ == '__main__':
     main()
