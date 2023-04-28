@@ -131,10 +131,10 @@ def main():
         for block in pbar:
             pbar.set_postfix_str(f'loading {block}')
             logger.info(f'Loading block {block}')
-            tdx_file = list((datadir / block).glob('*.Tdx'))
-            assert len(tdx_file) == 1
-            tdx_file = tdx_file[0]
             try:
+                tdx_file = list((datadir / block).glob('*.Tdx'))
+                assert len(tdx_file) == 1
+                tdx_file = tdx_file[0]
                 rec = se.read_tdt(tdx_file, stream_name=stream)
                 powers.append(compute_rec_power(rec))
                 # rec = preprocess_rec(rec)

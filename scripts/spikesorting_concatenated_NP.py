@@ -22,6 +22,8 @@ import spikeinterface.qualitymetrics as sqm
 import spikeinterface.exporters as sexp
 
 from spikesorting_scripts.npyx_metadata_fct import get_npix_sync
+from spikesorting_scripts.helpers import get_channelmap_names
+from spikesorting_scripts.postprocessing import postprocessing_si
 
 def spikeglx_preprocessing(recording):
     # Preprocessing steps
@@ -54,27 +56,59 @@ def spikesorting_postprocessing(params):
         logger.info(f'Postprocessing {rec_name} {sorter_name}')
         if params['remove_dup_spikes']:
             logger.info(f'removing duplicate spikes')
-            scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes']['censored_period_ms'])
+            scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes_params']['censored_period_ms'])
 
         logger.info('waveform extraction')
         outDir = params['output_folder'] / rec_name / sorter_name
         we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
                 load_if_exists=True,
                 overwrite=False,
-                ms_before=1, ms_after=2., max_spikes_per_unit=200,
+                ms_before=2, 
+                ms_after=3., 
+                max_spikes_per_unit=300,
+                sparse=True,
+                num_spikes_for_sparsity=100,
+                method="radius",
+                radius_um=40,
                 **jobs_kwargs)
 
         logger.info(f'Computing quality netrics')
         metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
 
         logger.info(f'Exporting to phy')
-        sexp.export_to_phy(we, outDir / 'phy_folder', verbose=True, **jobs_kwargs)
+        sexp.export_to_phy(we, outDir / 'phy_folder', 
+                           verbose=True, 
+                           compute_pc_features=False,
+                           **jobs_kwargs)
+        
+        postprocessing_si(outDir / 'phy_folder')
 
-        logger.info('Export report')
-        sexp.export_report(we, outDir / 'report',
-                format='png',
-                force_computation=True,
+        sorting = se.read_kilosort(outDir / 'phy_folder')
+
+        we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
+                load_if_exists=True,
+                overwrite=False,
+                ms_before=2, 
+                ms_after=3., 
+                max_spikes_per_unit=300,
+                sparse=True,
+                num_spikes_for_sparsity=100,
+                method="radius",
+                radius_um=40,
                 **jobs_kwargs)
+        
+        logger.info(f'Computing quality metrics')
+        metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
+
+        try:
+            logger.info('Export report')
+            sexp.export_report(we, outDir / 'report',
+                    format='png',
+                    force_computation=True,
+                    **jobs_kwargs)
+        except Exception as e:
+            logger.warning(f'Export report failed: {e}')
+
 
 
 def main():
@@ -113,21 +147,39 @@ def main():
     # Load recordings
     sessions = [sess.name for sess in datadir.glob('*_g0')]
 
-    recordings_list = []
+    recordings_dict = {}
     # /!\ This assumes that all the recordings must have same mapping
+    # And assumes one probe per recording
     for session in sessions:
         # Extract sync onsets and save as catgt would
         get_npix_sync(datadir / session, sync_trial_chan=[5])
 
         recording = se.read_spikeglx(datadir / session, stream_id='imec0.ap')
         recording = spikeglx_preprocessing(recording)
-        recordings_list.append(recording)
 
-    multirecordings = sc.concatenate_recordings(recordings_list)
-    multirecordings = multirecordings.set_probe(recordings_list[0].get_probe())
-    sorting = ss.run_sorters(params['sorter_list'], [multirecordings], working_folder=working_directory,
-        mode_if_folder_exists='overwrite', 
-        engine='loop', verbose=True)
+        chan_dict = get_channelmap_names(datadir/session)
+        rec_names = [rec for rec in chan_dict]
+        chan_map_name = chan_dict[rec_names[0]][:-5]
+
+        if chan_map_name in recordings_dict:
+            recordings_dict[chan_map_name].append(recording)
+        else:
+            recordings_dict[chan_map_name] = [recording]
+
+        # recordings_list.append(recording)
+
+    logger.info('Concatenating recordings')
+    multirecordings = {channel_map: sc.concatenate_recordings(recordings_dict[channel_map]) for channel_map in recordings_dict}
+    multirecordings = {channel_map: multirecordings[channel_map].set_probe(recordings_dict[channel_map][0].get_probe()) for channel_map in multirecordings}
+
+    logger.info(f'{[multirecordings[ch_map] for ch_map in multirecordings]}')
+    # multirecordings = sc.concatenate_recordings(recordings_list)
+    # multirecordings = multirecordings.set_probe(recordings_list[0].get_probe())
+    sorting = ss.run_sorters(params['sorter_list'], multirecordings, working_folder=working_directory,
+        mode_if_folder_exists='keep', 
+        engine='loop', verbose=True,
+        sorter_params=params['sorter_params'],
+        )
 
     # # If recordings don't have same mapping, can do something like this:
     # # In this example, only 2 mappings are in the data, but it can be extended to more mappings

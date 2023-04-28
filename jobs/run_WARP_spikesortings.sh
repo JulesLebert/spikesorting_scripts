@@ -4,13 +4,13 @@
 #$ -l h_rt=24:00:00
 
 # Request 256 gigabyte of RAM (must be an integer followed by M, G, or T)
-#$ -l mem=128G
+#$ -l mem=32G
 
 # Request 10 gigabyte of TMPDIR space (default is 10 GB)
 #$ -l tmpfs=10G
 
 # Request 6 cores.
-#$ -pe smp 10
+#$ -pe smp 12
 
 # Set the name of the job.
 #$ -N spikesorting_warp
@@ -31,4 +31,4 @@ source /home/skgtjml/envs/spikesorting_scritps/bin/activate
 # Your work should be done in $TMPDIR 
 cd $TMPDIR
 
-python /home/skgtjml/code/spikesorting_scripts/scripts/spikesorting_concatenated_WARP.py /home/skgtjml/code/spikesorting_scripts/scripts/json_files/spikesorting_params_concatenated_WARP.json
+python /home/skgtjml/code/spikesorting_scripts/scripts/spikesorting_concatenated_WARP.py /home/skgtjml/code/spikesorting_scripts/scripts/json_files/spikesorting_params_concatenated_WARP_7.json
