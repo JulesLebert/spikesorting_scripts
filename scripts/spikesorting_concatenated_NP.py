@@ -56,13 +56,15 @@ def spikesorting_postprocessing(params):
         logger.info(f'Postprocessing {rec_name} {sorter_name}')
         if params['remove_dup_spikes']:
             logger.info(f'removing duplicate spikes')
-            scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes_params']['censored_period_ms'])
+            sorting = scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes_params']['censored_period_ms'])
+        
+        sorting = scu.remove_excess_spikes(sorting, sorting._recording)
 
         logger.info('waveform extraction')
-        outDir = params['output_folder'] / rec_name / sorter_name
+        outDir = Path(params['output_folder']) / rec_name / sorter_name
         we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
-                load_if_exists=True,
-                overwrite=False,
+                # load_if_exists=True,
+                overwrite=True,
                 ms_before=2, 
                 ms_after=3., 
                 max_spikes_per_unit=300,
@@ -81,24 +83,24 @@ def spikesorting_postprocessing(params):
                            compute_pc_features=False,
                            **jobs_kwargs)
         
-        postprocessing_si(outDir / 'phy_folder')
+        # postprocessing_si(outDir / 'phy_folder')
 
-        sorting = se.read_kilosort(outDir / 'phy_folder')
+        # sorting = se.read_kilosort(outDir / 'phy_folder')
 
-        we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
-                load_if_exists=True,
-                overwrite=False,
-                ms_before=2, 
-                ms_after=3., 
-                max_spikes_per_unit=300,
-                sparse=True,
-                num_spikes_for_sparsity=100,
-                method="radius",
-                radius_um=40,
-                **jobs_kwargs)
+        # we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
+        #         load_if_exists=True,
+        #         overwrite=False,
+        #         ms_before=2, 
+        #         ms_after=3., 
+        #         max_spikes_per_unit=300,
+        #         sparse=True,
+        #         num_spikes_for_sparsity=100,
+        #         method="radius",
+        #         radius_um=40,
+        #         **jobs_kwargs)
         
-        logger.info(f'Computing quality metrics')
-        metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
+        # logger.info(f'Computing quality metrics')
+        # metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
 
         try:
             logger.info('Export report')
@@ -152,7 +154,7 @@ def main():
     # And assumes one probe per recording
     for session in sessions:
         # Extract sync onsets and save as catgt would
-        get_npix_sync(datadir / session, sync_trial_chan=[5])
+        # get_npix_sync(datadir / session, sync_trial_chan=[5])
 
         recording = se.read_spikeglx(datadir / session, stream_id='imec0.ap')
         recording = spikeglx_preprocessing(recording)
