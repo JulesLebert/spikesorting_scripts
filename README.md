@@ -72,9 +72,9 @@ And finally install the spikesorting_scripts package following the instructions 
 `pykilosort/postprocess.py` line 1480:~~
 
 ~~```python
-_save('channel_labels', probe.channel_labels, np.int8)
-# Change this to be:
-_save('channel_labels', probe.channels_labels, np.int8)
+_save('channel_labels', probe.channel_labels, np.int8)~~
+~`# Change this to be:~~
+~~_save('channel_labels', probe.channels_labels, np.int8)
 ```~~
 
 **Pull request with proposed changed merged (https://github.com/int-brain-lab/pykilosort/commit/dae7d4b3d815b701c5c9f797848bd4340f338d4e)**
