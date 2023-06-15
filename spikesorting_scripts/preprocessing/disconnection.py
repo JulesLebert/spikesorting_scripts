@@ -141,4 +141,4 @@ class RemoveDisconnectionEventRecordingSegment(BasePreprocessorSegment):
         return traces
     
 remove_disconnection_events = define_function_from_class(RemoveDisconnectionEventRecording, 
-                                                        name="remove_disconnection_event")
+                                                        name="remove_disconnection_events")
