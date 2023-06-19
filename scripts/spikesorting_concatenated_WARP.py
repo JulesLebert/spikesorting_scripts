@@ -27,6 +27,7 @@ from spikeinterface import concatenate_recordings
 from probeinterface import generate_multi_columns_probe
 
 from spikesorting_scripts.helpers import generate_warp_16ch_probe
+from spikesorting_scripts.preprocessing import remove_disconnection_events
 
 def compute_rec_power(rec):
     subset_data = sc.get_random_data_chunks(rec, num_chunks_per_segment=100,
@@ -40,7 +41,7 @@ def preprocess_rec(recording):
     probe = generate_warp_16ch_probe()
     recording = recording.set_probe(probe)
     recording_pre = spre.common_reference(recording, reference='global', operator='median')
-    recording_pre = spre.remove_disconnection_event(recording_pre,
+    recording_pre = remove_disconnection_events(recording_pre,
                             compute_medians="random",
                             chunk_size= int(recording_pre.get_sampling_frequency()*3),
                             n_median_threshold=3,
@@ -61,8 +62,8 @@ def export_all(working_directory, output_folder, job_kwargs):
         we = sc.extract_waveforms(sorting._recording,
                                 sorting, outDir / 'waveforms', 
                                 ms_before=2.5, ms_after=3, 
-                                max_spikes_per_unit=300, load_if_exists=True,
-                                overwrite=False,
+                                max_spikes_per_unit=300, #load_if_exists=True,
+                                overwrite=True,
                                 **job_kwargs
                                 # n_jobs=10, 
                                 # chunk_size=30000
@@ -157,7 +158,7 @@ def main():
 
     sortings = ss.run_sorters(sorter_list, recordings, working_folder=working_directory,
         engine='loop', verbose=True,
-        mode_if_folder_exists='keep',
+        mode_if_folder_exists='overwrite',
         sorter_params=params['sorter_params']
         )
 

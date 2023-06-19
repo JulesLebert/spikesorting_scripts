@@ -7,7 +7,7 @@
 
     "streams": ["BB_4", "BB_5"],
 
-    "sorter_list": ["mountainsort4"],
+    "sorter_list": ["mountainsort5"],
 
     "sorter_params":
     {
@@ -17,6 +17,12 @@
             "filter": false,
             "whiten": false,
             "num_workers": 10
+        },
+        "mountainsort5":
+        {
+            "scheme": "3",
+            "filter": false,
+            "whiten": false
         }
     },
 

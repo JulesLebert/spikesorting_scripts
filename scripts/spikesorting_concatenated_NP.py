@@ -22,7 +22,7 @@ import spikeinterface.qualitymetrics as sqm
 import spikeinterface.exporters as sexp
 
 from spikesorting_scripts.npyx_metadata_fct import get_npix_sync
-from spikesorting_scripts.helpers import get_channelmap_names
+from spikesorting_scripts.helpers import get_channelmap_names, sort_np_sessions
 from spikesorting_scripts.postprocessing import postprocessing_si
 
 def spikeglx_preprocessing(recording):
@@ -62,54 +62,58 @@ def spikesorting_postprocessing(params):
 
         logger.info('waveform extraction')
         outDir = Path(params['output_folder']) / rec_name / sorter_name
-        we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
-                # load_if_exists=True,
-                overwrite=True,
-                ms_before=2, 
-                ms_after=3., 
-                max_spikes_per_unit=300,
-                sparse=True,
-                num_spikes_for_sparsity=100,
-                method="radius",
-                radius_um=40,
-                **jobs_kwargs)
-
-        logger.info(f'Computing quality netrics')
-        metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
-
-        logger.info(f'Exporting to phy')
-        sexp.export_to_phy(we, outDir / 'phy_folder', 
-                           verbose=True, 
-                           compute_pc_features=False,
-                           **jobs_kwargs)
-        
-        # postprocessing_si(outDir / 'phy_folder')
-
-        # sorting = se.read_kilosort(outDir / 'phy_folder')
-
-        # we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
-        #         load_if_exists=True,
-        #         overwrite=False,
-        #         ms_before=2, 
-        #         ms_after=3., 
-        #         max_spikes_per_unit=300,
-        #         sparse=True,
-        #         num_spikes_for_sparsity=100,
-        #         method="radius",
-        #         radius_um=40,
-        #         **jobs_kwargs)
-        
-        # logger.info(f'Computing quality metrics')
-        # metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
-
-        try:
-            logger.info('Export report')
-            sexp.export_report(we, outDir / 'report',
-                    format='png',
-                    force_computation=True,
+        if (outDir / 'waveforms_folder').exists():
+            we = sc.load_waveforms(outDir / 'waveforms_folder', sorting=sorting)
+        else:
+            we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
+                    # load_if_exists=True,
+                    overwrite=False,
+                    ms_before=2, 
+                    ms_after=3., 
+                    max_spikes_per_unit=300,
+                    sparse=True,
+                    num_spikes_for_sparsity=100,
+                    method="radius",
+                    radius_um=40,
                     **jobs_kwargs)
-        except Exception as e:
-            logger.warning(f'Export report failed: {e}')
+
+        if not (outDir / 'report').exists():
+            logger.info(f'Computing quality netrics')
+            metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
+            
+            logger.info(f'Exporting to phy')
+            sexp.export_to_phy(we, outDir / 'phy_folder', 
+                            verbose=True, 
+                            compute_pc_features=False,
+                            **jobs_kwargs)
+            
+            # postprocessing_si(outDir / 'phy_folder')
+
+            # sorting = se.read_kilosort(outDir / 'phy_folder')
+
+            # we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
+            #         load_if_exists=True,
+            #         overwrite=False,
+            #         ms_before=2, 
+            #         ms_after=3., 
+            #         max_spikes_per_unit=300,
+            #         sparse=True,
+            #         num_spikes_for_sparsity=100,
+            #         method="radius",
+            #         radius_um=40,
+            #         **jobs_kwargs)
+            
+            # logger.info(f'Computing quality metrics')
+            # metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
+
+            try:
+                logger.info('Export report')
+                sexp.export_report(we, outDir / 'report',
+                        format='png',
+                        force_computation=True,
+                        **jobs_kwargs)
+            except Exception as e:
+                logger.warning(f'Export report failed: {e}')
 
 
 
@@ -147,7 +151,8 @@ def main():
     logger.info('Start loading recordings')
 
     # Load recordings
-    sessions = [sess.name for sess in datadir.glob('*_g0')]
+    sessions = [sess for sess in datadir.glob('*_g0')]
+    sessions = sort_np_sessions(sessions)
 
     recordings_dict = {}
     # /!\ This assumes that all the recordings must have same mapping
