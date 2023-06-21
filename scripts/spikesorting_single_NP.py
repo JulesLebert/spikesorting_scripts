@@ -11,7 +11,6 @@ import datetime
 import argparse
 import json
 from jsmin import jsmin
-import re
 
 import spikeinterface.extractors as se
 import spikeinterface.preprocessing as spre
@@ -20,8 +19,6 @@ import spikeinterface.core as sc
 import spikeinterface.curation as scu
 import spikeinterface.qualitymetrics as sqm
 import spikeinterface.exporters as sexp
-
-from spikesorting_scripts.postprocessing import postprocessing_si
 
 def spikeglx_preprocessing(recording):
     recording = spre.phase_shift(recording)
@@ -54,42 +51,45 @@ def spikesorting_postprocessing(rec, params):
             logger.info(f'removing duplicate spikes')
             sorting = scu.remove_duplicated_spikes(sorting, censored_period_ms=params['remove_dup_spikes_params']['censored_period_ms'])
 
+        sorting = scu.remove_excess_spikes(sorting, sorting._recording)
+
         logger.info('waveform extraction')
-        outDir = Path(params['output_folder']) / rec.name / sorter_name
+        outDir = Path(params['output_folder']) / rec_name / sorter_name
 
-        we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
-                load_if_exists=True,
-                overwrite=False,
-                ms_before=1, ms_after=2., max_spikes_per_unit=100,
-                **jobs_kwargs)
-
-        logger.info(f'Exporting to phy')
-        sexp.export_to_phy(we, outDir / 'phy_folder',
-            verbose=True, 
-            compute_pc_features=False,
-            **jobs_kwargs)
-        
-        postprocessing_si(outDir / 'phy_folder')
-
-        sorting = se.read_kilosort(outDir / 'phy_folder')
-
-        we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
-            load_if_exists=False,
-            overwrite=True,
-            ms_before=1, ms_after=2., max_spikes_per_unit=100,
-            **jobs_kwargs)
-
-        logger.info(f'Computing quality metrics')
-        metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
-
-        try:
-            logger.info('Export report')
-            sexp.export_report(we, outDir / 'report',
-                    format='png',
-                    force_computation=True,
+        if (outDir / 'waveforms_folder').exists():
+            we = sc.load_waveforms(outDir / 'waveforms_folder', sorting=sorting)
+        else:
+            we = sc.extract_waveforms(sorting._recording, sorting, outDir / 'waveforms_folder',
+                    # load_if_exists=True,
+                    overwrite=False,
+                    ms_before=2, 
+                    ms_after=3., 
+                    max_spikes_per_unit=300,
+                    sparse=True,
+                    num_spikes_for_sparsity=100,
+                    method="radius",
+                    radius_um=40,
                     **jobs_kwargs)
-        except Exception as e:
-            logger.warning(f'Export report failed: {e}')
+
+        if not (outDir / 'report').exists():
+            logger.info(f'Computing quality netrics')
+            metrics = sqm.compute_quality_metrics(we, n_jobs = jobs_kwargs['n_jobs'], verbose=True)
+            
+            logger.info(f'Exporting to phy')
+            sexp.export_to_phy(we, outDir / 'phy_folder', 
+                            verbose=True, 
+                            compute_pc_features=False,
+                            **jobs_kwargs)
+
+            try:
+                logger.info('Export report')
+                sexp.export_report(we, outDir / 'report',
+                        format='png',
+                        force_computation=True,
+                        **jobs_kwargs)
+            except Exception as e:
+                logger.warning(f'Export report failed: {e}')
+
 
 
     
